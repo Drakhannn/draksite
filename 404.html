@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>404 — DRAKHANN</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@300;400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #03050a;
+  --bg2: #0c1018;
+  --accent: #e8372a;
+  --accent2: #ff6b5b;
+  --gold: #c9a84c;
+  --text: #d8dde8;
+  --muted: #6b7280;
+  --border: rgba(232,55,42,0.18);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Rajdhani', sans-serif;
+  min-height: 100vh;
+  cursor: none;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* NOISE */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 900; opacity: 0.4;
+}
+
+/* CURSOR */
+#cursor {
+  width: 10px; height: 10px; background: var(--accent); border-radius: 50%;
+  position: fixed; pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%); mix-blend-mode: screen;
+  transition: transform 0.1s, background 0.2s;
+}
+#cursor.hover { transform: translate(-50%,-50%) scale(3); background: white; }
+#cursor-ring {
+  width: 34px; height: 34px; border: 1px solid rgba(232,55,42,0.5);
+  border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998;
+  transform: translate(-50%,-50%); transition: all 0.15s ease;
+}
+#cursor-ring.hover { transform: translate(-50%,-50%) scale(1.5); border-color: white; }
+
+/* CANVAS */
+#bgCanvas {
+  position: fixed; inset: 0; z-index: 0;
+  pointer-events: none; width: 100%; height: 100%;
+}
+
+/* NAV */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 22px 60px;
+  background: linear-gradient(to bottom, rgba(3,5,10,0.97), transparent);
+}
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem; letter-spacing: 5px; color: #fff;
+  text-decoration: none;
+}
+.logo em { color: var(--accent); font-style: normal; }
+
+/* MAIN CONTENT */
+.container {
+  position: relative; z-index: 10;
+  text-align: center;
+  padding: 20px;
+}
+
+/* GLITCH 404 */
+.error-code {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(8rem, 25vw, 20rem);
+  letter-spacing: 10px;
+  color: #fff;
+  line-height: 1;
+  position: relative;
+  display: inline-block;
+  animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
+}
+.error-code::before,
+.error-code::after {
+  content: '404';
+  position: absolute; inset: 0;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: inherit;
+  letter-spacing: inherit;
+}
+.error-code::before {
+  color: var(--accent);
+  animation: glitch1 3s infinite;
+  clip-path: polygon(0 0, 100% 0, 100% 35%, 0 35%);
+}
+.error-code::after {
+  color: #0ff;
+  animation: glitch2 3s infinite;
+  clip-path: polygon(0 65%, 100% 65%, 100% 100%, 0 100%);
+  opacity: 0.4;
+}
+
+@keyframes glitch1 {
+  0%,90%,100% { transform: translate(0); opacity: 1; }
+  92% { transform: translate(-4px, 2px); opacity: 0.8; }
+  94% { transform: translate(4px, -2px); opacity: 0.9; }
+  96% { transform: translate(-2px, 0); opacity: 0.7; }
+  98% { transform: translate(0); opacity: 1; }
+}
+@keyframes glitch2 {
+  0%,90%,100% { transform: translate(0); opacity: 0.4; }
+  92% { transform: translate(4px, -2px); opacity: 0.6; }
+  94% { transform: translate(-4px, 2px); opacity: 0.3; }
+  96% { transform: translate(2px, 0); opacity: 0.5; }
+  98% { transform: translate(0); opacity: 0.4; }
+}
+
+.error-line {
+  width: 80px; height: 2px;
+  background: linear-gradient(to right, var(--accent), var(--gold));
+  margin: 0 auto 24px;
+  animation: fadeUp 0.8s 0.15s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+.error-eyebrow {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 5px; color: var(--accent);
+  text-transform: uppercase; margin-bottom: 16px;
+  animation: fadeUp 0.8s 0.1s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+.error-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(1.8rem, 5vw, 3.5rem);
+  letter-spacing: 6px; color: #fff;
+  margin-bottom: 16px;
+  animation: fadeUp 0.8s 0.2s cubic-bezier(0.16,1,0.3,1) both;
+}
+.error-title em { color: var(--accent); font-style: normal; }
+
+.error-sub {
+  font-size: 1rem; font-weight: 300; color: var(--muted);
+  letter-spacing: 1px; line-height: 1.7; margin-bottom: 40px;
+  max-width: 420px; margin-left: auto; margin-right: auto;
+  animation: fadeUp 0.8s 0.3s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+.error-actions {
+  display: flex; gap: 16px; justify-content: center; flex-wrap: wrap;
+  animation: fadeUp 0.8s 0.4s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+.btn-primary {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.68rem; letter-spacing: 3px; text-transform: uppercase;
+  color: #fff; background: var(--accent);
+  padding: 14px 32px; text-decoration: none;
+  transition: all 0.3s; cursor: none; border: none;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.btn-primary:hover { background: var(--accent2); box-shadow: 0 0 30px rgba(232,55,42,0.4); transform: translateY(-2px); }
+
+.btn-secondary {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.68rem; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--muted); background: none;
+  padding: 14px 32px; text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.08);
+  transition: all 0.3s; cursor: none;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.btn-secondary:hover { color: #fff; border-color: var(--accent); }
+
+/* COORDONNÉES GLITCH */
+.coords {
+  position: fixed; bottom: 28px; left: 60px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.55rem; letter-spacing: 3px; color: var(--muted);
+  text-transform: uppercase; z-index: 10;
+  animation: fadeUp 1s 0.6s cubic-bezier(0.16,1,0.3,1) both;
+}
+
+.scan-line {
+  position: fixed; inset: 0; z-index: 5; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+}
+
+/* Ligne rouge verticale décorative */
+.deco-line {
+  position: fixed; left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(to bottom, transparent, var(--accent), transparent);
+  z-index: 10; opacity: 0.4;
+}
+
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(24px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  body { cursor: auto; overflow-y: auto; }
+  #cursor, #cursor-ring { display: none; }
+  nav { padding: 16px 20px; }
+  .logo { font-size: 1.4rem; }
+  .coords { left: 20px; bottom: 20px; }
+  .error-actions { flex-direction: column; align-items: center; }
+  .btn-primary, .btn-secondary { width: 100%; max-width: 280px; justify-content: center; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<canvas id="bgCanvas"></canvas>
+<div class="scan-line"></div>
+<div class="deco-line"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="logo">DRAK<em>H</em>ANN</a>
+</nav>
+
+<!-- CONTENT -->
+<div class="container">
+  <p class="error-eyebrow">// Erreur · Page introuvable</p>
+  <div class="error-code">404</div>
+  <div class="error-line"></div>
+  <h1 class="error-title">ZONE <em>INCONNUE</em></h1>
+  <p class="error-sub">Cette page n'existe pas ou a été déplacée. Tu t'es perdu dans la Draklande.</p>
+  <div class="error-actions">
+    <a href="index.html" class="btn-primary">← Retour à l'univers</a>
+    <a href="videos.html" class="btn-secondary">▶ Voir les vidéos</a>
+  </div>
+</div>
+
+<!-- COORDS -->
+<div class="coords" id="coords">// X: 000 · Y: 000 · ZONE: NULL</div>
+
+<script>
+/* CURSOR */
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursor-ring');
+let cx=0,cy=0,rx=0,ry=0;
+document.addEventListener('mousemove', e => {
+  cx = e.clientX; cy = e.clientY;
+  cursor.style.left = cx+'px'; cursor.style.top = cy+'px';
+  const coords = document.getElementById('coords');
+  if(coords) coords.textContent = `// X: ${cx} · Y: ${cy} · ZONE: NULL`;
+});
+(function anim(){ rx+=(cx-rx)*.1; ry+=(cy-ry)*.1; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(anim); })();
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); ring.classList.add('hover'); });
+  el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); ring.classList.remove('hover'); });
+});
+
+/* CANVAS BACKGROUND */
+(function(){
+  const cv  = document.getElementById('bgCanvas');
+  const ctx = cv.getContext('2d');
+  const isMob = window.innerWidth <= 768;
+  let W, H, mx, my, tmx, tmy;
+
+  function resize(){ W=cv.width=window.innerWidth; H=cv.height=window.innerHeight; mx=W/2; my=H/2; tmx=W/2; tmy=H/2; }
+  resize();
+  window.addEventListener('resize', resize);
+  document.addEventListener('mousemove', e => { tmx=e.clientX; tmy=e.clientY; mx=e.clientX; my=e.clientY; });
+
+  /* grille */
+  const CELL = 68;
+  let gmx=W/2, gmy=H/2;
+  function drawGrid(){
+    gmx+=(tmx-gmx)*.07; gmy+=(tmy-gmy)*.07;
+    const cols=Math.ceil(W/CELL)+2, rows=Math.ceil(H/CELL)+2;
+    for(let c=0;c<cols;c++) for(let r=0;r<rows;r++){
+      const x=c*CELL, y=r*CELL, dx=x-gmx, dy=y-gmy;
+      const dist=Math.sqrt(dx*dx+dy*dy), prox=Math.max(0,1-dist/210);
+      ctx.strokeStyle='rgba('+(Math.round(232*prox+255*(1-prox)))+','+Math.round(55*prox)+','+Math.round(42*prox)+','+(0.022+prox*.18)+')';
+      ctx.lineWidth = prox>.3?.75:.4;
+      const wx=prox*(dx/(dist||1))*-3.5, wy=prox*(dy/(dist||1))*-3.5;
+      ctx.beginPath(); ctx.rect(x+wx,y+wy,CELL,CELL); ctx.stroke();
+      if(prox>.5){ ctx.beginPath(); ctx.arc(x+wx,y+wy,prox*2.2,0,Math.PI*2); ctx.fillStyle='rgba(232,55,42,'+(prox*.55)+')'; ctx.fill(); }
+    }
+  }
+
+  /* particules */
+  const COUNT = isMob ? 20 : 60;
+  function mkP(){ const p={x:Math.random()*W,y:Math.random()*H,sz:Math.random()*1.4+.3,vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22,a:Math.random()*.38+.08,life:Math.random()*260+100,age:0}; p.bx=p.x; p.by=p.y; p.ta=p.a; const rnd=Math.random(); if(rnd>.92){p.r=232;p.g=55;p.b=42;}else if(rnd>.85){p.r=201;p.g=168;p.b=76;}else{p.r=200;p.g=210;p.b=230;} return p; }
+  const parts=[]; for(let i=0;i<COUNT;i++) parts.push(mkP());
+  function upP(p){ p.age++; if(p.age>p.life){const n=mkP();for(const k in n)p[k]=n[k];return;} const dx=mx-p.x,dy=my-p.y,d=Math.sqrt(dx*dx+dy*dy),R=115; if(d<R&&d>0){const f=(R-d)/R;p.x-=(dx/d)*f*2.2;p.y-=(dy/d)*f*2.2;p.ta=Math.min(1,p.a+f*.45);}else{p.x+=(p.bx-p.x)*.013+p.vx;p.y+=(p.by-p.y)*.013+p.vy;p.ta=p.a;} p.ca=p.ta*Math.sin((p.age/p.life)*Math.PI); }
+
+  function anim(){
+    ctx.clearRect(0,0,W,H);
+    drawGrid();
+    for(let i=0;i<parts.length;i++){
+      upP(parts[i]);
+      ctx.beginPath(); ctx.arc(parts[i].x,parts[i].y,parts[i].sz,0,Math.PI*2);
+      ctx.fillStyle='rgba('+parts[i].r+','+parts[i].g+','+parts[i].b+','+(parts[i].ca||0)+')';
+      ctx.fill();
+    }
+    requestAnimationFrame(anim);
+  }
+  anim();
+})();
+</script>
+</body>
+</html>
