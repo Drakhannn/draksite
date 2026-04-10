@@ -943,5 +943,44 @@ function _doAdminCheck(){
   if(window._checkAdminAccess) window._checkAdminAccess(_u.uid);
 }
 </script>
+<script>
+window._checkAdminAccess = async function(uid) {
+  try {
+    const { getFirestore, doc, getDoc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+    const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+    const cfg = {
+      apiKey:"AIzaSyACz_E00hsxZvPtQs1FR5XfzagKZX7Vq5Y",
+      authDomain:"drakhann-site.firebaseapp.com",
+      projectId:"drakhann-site"
+    };
+    const app = getApps().length ? getApps()[0] : initializeApp(cfg);
+    const db  = getFirestore(app);
+    const snap = await getDoc(doc(db, "admins", uid));
+    const granted = snap.exists() && snap.data().granted === true;
+    if (granted) {
+      if(typeof isAdminAp !== 'undefined') isAdminAp = true;
+      else if(typeof isAdmin !== 'undefined') isAdmin = true;
+      sessionStorage.setItem('drakhann_admin','1');
+      if(typeof initAdminAp==='function') initAdminAp();
+      else if(typeof initAdminUI==='function') initAdminUI();
+      if(typeof renderTracks==='function') renderTracks();
+      if(typeof renderProjects==='function') renderProjects();
+      if(typeof renderCalendar==='function'){ renderCalendar(); renderAgenda(); }
+      if(typeof drkShowToast==='function') drkShowToast('✓ Mode admin activé');
+      if(typeof closeAdminModal==='function') closeAdminModal();
+      else if(typeof closePwModal==='function') closePwModal();
+      else if(typeof closeAdminLogin==='function') closeAdminLogin();
+    } else {
+      const errEl = document.getElementById('adminPwError') || document.getElementById('pwError');
+      if(errEl) errEl.textContent = '✕ Accès refusé — compte non autorisé';
+      setTimeout(() => {
+        if(typeof closeAdminModal==='function') closeAdminModal();
+        else if(typeof closePwModal==='function') closePwModal();
+        else if(typeof closeAdminLogin==='function') closeAdminLogin();
+      }, 2000);
+    }
+  } catch(e) { console.error('Admin check failed', e); }
+};
+</script>
 </body>
 </html>
