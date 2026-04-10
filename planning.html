@@ -1360,27 +1360,6 @@ window._checkAdminAccess = async function(uid) {
     }
   } catch(e) { console.error('Admin check failed', e); }
 };
-    const app = getApps().length ? getApps()[0] : initializeApp(cfg);
-    const db  = getFirestore(app);
-    const snap = await getDoc(doc(db, "admins", uid));
-    const granted = snap.exists() && snap.data().granted === true;
-    if (granted) {
-      isAdmin = true;
-      sessionStorage.setItem('drakhann_admin','1');
-      if(typeof initAdminUI === 'function') initAdminUI();
-      if(typeof renderTracks === 'function') renderTracks();
-      if(typeof renderProjects === 'function') renderProjects();
-      if(typeof drkShowToast === 'function') drkShowToast('✓ Mode admin activé');
-      if(typeof closePwModal === 'function') closePwModal();
-    } else {
-      const errEl = document.getElementById('pwError');
-      if(errEl) errEl.textContent = '✕ Accès refusé — compte non autorisé';
-      setTimeout(() => { if(typeof closePwModal==='function') closePwModal(); }, 2000);
-    }
-  } catch(e) {
-    console.error('Admin check failed', e);
-  }
-};
 </script>
 <script>
 function _doAdminCheck(){
