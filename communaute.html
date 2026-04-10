@@ -1463,11 +1463,21 @@ function openAdminModal(){
     }
     return;
   }
-  document.getElementById('adminPwInput').value = '';
-  document.getElementById('adminPwError').textContent = '';
+  var _u=(function(){try{return JSON.parse(sessionStorage.getItem('drakhann_user_v1')||'null');}catch(e){return null;}})();
+  if(!_u){
+    if(typeof showToast==='function') showToast("// Connecte-toi d'abord avec Google");
+    if(window.openAuthModal) window.openAuthModal();
+    return;
+  }
+  var inp = document.getElementById('adminPwInput');
+  var sub = document.querySelector('.admin-pw-submit');
+  var err = document.getElementById('adminPwError');
+  if(inp) inp.style.display='none';
+  if(sub) sub.style.display='none';
+  if(err) err.textContent='// Vérification en cours…';
   var m = document.getElementById('adminModal');
-  if(m){ m.classList.add('open'); document.body.style.overflow = 'hidden'; }
-  setTimeout(function(){ document.getElementById('adminPwInput').focus(); }, 120);
+  if(m){ m.classList.add('open'); document.body.style.overflow='hidden'; }
+  if(window._checkAdminAccess) window._checkAdminAccess(_u.uid);
 }
 
 function closeAdminModal(){

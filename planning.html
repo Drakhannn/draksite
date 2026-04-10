@@ -562,21 +562,16 @@ let isAdmin = sessionStorage.getItem('drakhann_admin') === '1';
   window._grantAdmin = function() {
     isAdmin = true;
     sessionStorage.setItem('drakhann_admin','1');
-    if(typeof initAdminUI==='function') initAdminUI();
-    if(typeof renderTracks==='function') renderTracks();
-    if(typeof renderProjects==='function') renderProjects();
-    if(typeof renderCalendar==='function'){ renderCalendar(); if(typeof renderAgenda==='function') renderAgenda(); }
-    if(typeof drkShowToast==='function') drkShowToast('✓ Mode admin activé');
-    if(typeof closePwModal==='function') closePwModal();
-    if(typeof closeAdminModal==='function') closeAdminModal();
+    if(typeof updateAdminUI==='function') updateAdminUI();
+    if(typeof renderCalendar==='function') renderCalendar();
+    if(typeof renderAgenda==='function') renderAgenda();
+    if(typeof showToast==='function') showToast('✓ Mode admin activé — cliquez sur un jour pour ajouter');
     if(typeof closeAdminLogin==='function') closeAdminLogin();
   };
   window._revokeAdmin = function() {
     isAdmin = false;
     sessionStorage.removeItem('drakhann_admin');
-    if(typeof initAdminUI==='function') initAdminUI();
-    if(typeof renderProjects==='function') renderProjects();
-    if(typeof renderTracks==='function') renderTracks();
+    if(typeof updateAdminUI==='function') updateAdminUI();
   };
 let currentYear, currentMonth;
 let editingId = null;
@@ -834,11 +829,21 @@ function openAdminLogin(){
     }
     return;
   }
-  document.getElementById('adminPwInput').value = '';
-  document.getElementById('adminPwError').textContent = '';
+  var _u=(function(){try{return JSON.parse(sessionStorage.getItem('drakhann_user_v1')||'null');}catch(e){return null;}})();
+  if(!_u){
+    if(typeof showToast==='function') showToast("// Connecte-toi d'abord avec Google");
+    if(window.openAuthModal) window.openAuthModal();
+    return;
+  }
+  var inp = document.getElementById('adminPwInput');
+  var sub = document.querySelector('.admin-pw-submit, .admin-login-submit');
+  var err = document.getElementById('adminPwError');
+  if(inp) inp.style.display='none';
+  if(sub) sub.style.display='none';
+  if(err) err.textContent='// Vérification en cours…';
   document.getElementById('adminModal').classList.add('open');
-  document.body.style.overflow = 'hidden';
-  setTimeout(()=>document.getElementById('adminPwInput').focus(), 120);
+  document.body.style.overflow='hidden';
+  if(window._checkAdminAccess) window._checkAdminAccess(_u.uid);
 }
 function closeAdminLogin(){
   document.getElementById('adminModal').classList.remove('open');
