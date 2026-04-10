@@ -1464,13 +1464,6 @@ function closeAdminModal(){
 
 function checkAdminPw(){ _doAdminCheck(); }
 
-/* Fermer la modale admin en cliquant en dehors */
-document.addEventListener('DOMContentLoaded', function(){
-  var overlay = document.getElementById('adminModal');
-  if(overlay) overlay.addEventListener('click', function(e){ if(e.target === overlay) closeAdminModal(); });
-  initAdminUI();
-});
-
 document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeAdminModal(); });
 
 /* ── Séquence secrète admin : D R A K ── */

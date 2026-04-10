@@ -646,8 +646,6 @@ function openPwModal(){
   window._checkAdminAccess(_u.uid);}
 function closePwModal(){document.getElementById('pwModal').classList.remove('open');}
 function checkPassword(){ _doAdminCheck(); }
-  else{const inp=document.getElementById('pwInput');inp.classList.add('error');document.getElementById('pwError').textContent='✕ Mot de passe incorrect';inp.value='';setTimeout(()=>inp.classList.remove('error'),500);}
-}
 function openTrackEditor(id){
   if(!isAdmin){openPwModal();return;}
   editingTrack=id;
