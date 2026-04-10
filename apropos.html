@@ -954,11 +954,24 @@ function openAdminModal(){
     }
     return;
   }
-  document.getElementById('adminPwInput').value='';
-  document.getElementById('adminPwError').textContent='';
+  // Si pas connecté Google → rediriger vers connexion
+  var _u=(function(){try{return JSON.parse(sessionStorage.getItem('drakhann_user_v1')||'null');}catch(e){return null;}})();
+  if(!_u){
+    if(typeof drkShowToast==='function') drkShowToast("// Connecte-toi d'abord avec Google");
+    if(window.openAuthModal) window.openAuthModal();
+    return;
+  }
+  // Affiche le modal en mode "vérification" (sans input visible)
+  var inp = document.getElementById('adminPwInput');
+  var sub = document.querySelector('.admin-pw-submit');
+  var err = document.getElementById('adminPwError');
+  if(inp) inp.style.display='none';
+  if(sub) sub.style.display='none';
+  if(err) err.textContent='// Vérification en cours…';
   document.getElementById('adminModal').classList.add('open');
   document.body.style.overflow='hidden';
-  setTimeout(()=>document.getElementById('adminPwInput').focus(),120);
+  // Vérification Firestore
+  if(window._checkAdminAccess) window._checkAdminAccess(_u.uid);
 }
 
 function closeAdminModal(){
@@ -1029,17 +1042,25 @@ window._checkAdminAccess = async function(uid) {
     const snap = await getDoc(doc(db, "admins", uid));
     const granted = snap.exists() && snap.data().granted === true;
     if (granted) {
-      isAdmin = true;
+      // apropos.html utilise isAdminAp / initAdminAp
+      if(typeof isAdminAp !== 'undefined') { isAdminAp = true; }
+      else if(typeof isAdmin !== 'undefined') { isAdmin = true; }
       sessionStorage.setItem('drakhann_admin','1');
-      if(typeof initAdminUI === 'function') initAdminUI();
+      if(typeof initAdminAp === 'function') initAdminAp();
+      else if(typeof initAdminUI === 'function') initAdminUI();
       if(typeof renderTracks === 'function') renderTracks();
       if(typeof renderProjects === 'function') renderProjects();
       if(typeof drkShowToast === 'function') drkShowToast('✓ Mode admin activé');
-      if(typeof closePwModal === 'function') closePwModal();
+      // Ferme le bon modal
+      if(typeof closeAdminModal === 'function') closeAdminModal();
+      else if(typeof closePwModal === 'function') closePwModal();
     } else {
-      const errEl = document.getElementById('pwError');
+      const errEl = document.getElementById('adminPwError') || document.getElementById('pwError');
       if(errEl) errEl.textContent = '✕ Accès refusé — compte non autorisé';
-      setTimeout(() => { if(typeof closePwModal==='function') closePwModal(); }, 2000);
+      setTimeout(() => {
+        if(typeof closeAdminModal==='function') closeAdminModal();
+        else if(typeof closePwModal==='function') closePwModal();
+      }, 2000);
     }
   } catch(e) {
     console.error('Admin check failed', e);
