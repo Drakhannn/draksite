@@ -929,6 +929,18 @@ window.savePseudo = async function(){
 <script>
 /* ── ADMIN — À PROPOS ── */
 let isAdminAp = sessionStorage.getItem('drakhann_admin') === '1';
+  window._grantAdmin = function() {
+    isAdminAp = true;
+    sessionStorage.setItem('drakhann_admin','1');
+    if(typeof initAdminAp==='function') initAdminAp();
+    if(typeof drkShowToast==='function') drkShowToast('✓ Mode admin activé');
+    if(typeof closeAdminModal==='function') closeAdminModal();
+  };
+  window._revokeAdmin = function() {
+    isAdminAp = false;
+    sessionStorage.removeItem('drakhann_admin');
+    if(typeof initAdminAp==='function') initAdminAp();
+  };
 
 function initAdminAp(){
   const btn = document.getElementById('adminLockBtn');
@@ -1037,6 +1049,33 @@ window._checkAdminAccess = async function(uid) {
       authDomain:"drakhann-site.firebaseapp.com",
       projectId:"drakhann-site"
     };
+    const app = getApps().length ? getApps()[0] : initializeApp(cfg);
+    const db  = getFirestore(app);
+    const snap = await getDoc(doc(db, "admins", uid));
+    const granted = snap.exists() && snap.data().granted === true;
+    if (granted) {
+      // _grantAdmin() est exposé par chaque page et modifie isAdmin dans le bon scope
+      if(typeof window._grantAdmin === 'function') {
+        window._grantAdmin();
+      } else {
+        // Fallback pour apropos (isAdminAp)
+        if(typeof isAdminAp !== 'undefined') isAdminAp = true;
+        sessionStorage.setItem('drakhann_admin','1');
+        if(typeof initAdminAp==='function') initAdminAp();
+        if(typeof drkShowToast==='function') drkShowToast('✓ Mode admin activé');
+        if(typeof closeAdminModal==='function') closeAdminModal();
+      }
+    } else {
+      const errEl = document.getElementById('adminPwError') || document.getElementById('pwError');
+      if(errEl) errEl.textContent = '✕ Accès refusé — compte non autorisé';
+      setTimeout(() => {
+        if(typeof closeAdminModal==='function') closeAdminModal();
+        else if(typeof closePwModal==='function') closePwModal();
+        else if(typeof closeAdminLogin==='function') closeAdminLogin();
+      }, 2000);
+    }
+  } catch(e) { console.error('Admin check failed', e); }
+};
     const app = getApps().length ? getApps()[0] : initializeApp(cfg);
     const db  = getFirestore(app);
     const snap = await getDoc(doc(db, "admins", uid));
